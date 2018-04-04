@@ -11,3 +11,5 @@ Class for formatting `CLCoordinateLocation2D` to human-readable format in degree
     - 27° 43.745′ W
     - 49° 56′ 14″ S, 15° 37′ 42″ E
     - 17 degrees 42 minutes 12 seconds North
+
+Written in Swift, **fully** compatible with Objective-C.
