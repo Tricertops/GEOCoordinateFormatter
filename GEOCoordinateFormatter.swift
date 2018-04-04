@@ -20,10 +20,21 @@ import CoreLocation
     //MARK:  Precision & Locale
     /// Locale used to format numbers, passed to the underlaying NSNumberFormatter.
     @objc public var locale: Locale = Locale(identifier: "en_US_POSIX")
-    /// Specify which units will be used. This formatter always prints all larger units, for example 0° 0′ 1″ (smallestUnit = seconds).
+    /// Specify which units will be used. This formatter always prints all larger units, for example 0° 0′ 3″ (smallestUnit = seconds).
     @objc public var smallestUnit: GEOCoordinateFormatterUnit = .minutes
     /// Specify how many digits beyond degrees should be printed, degrees are always printer with up to 3 integer digits. After using all integer digits allowed by smallestUnit, the smallest unit will get fractional digits. For example 12° 34.567′ (smallestUnit = minutes, fractionalDigits = 5).
     @objc public var fractionalDigits: UInt = 2
+    
+    /// To get a sense of distances, here is a convenient table for equator.
+    /// Keep in mind that longitudal resolution decreases toward poles.
+    ///   1°  = 111 km  (smallestUnit = degrees, fractionalDigits = 0)
+    ///   0.1°  = 11.1 km  (smallestUnit = degrees, fractionalDigits = 1)
+    ///   0° 1′  = 1.86 km  (smallestUnit = minutes, fractionalDigits = 1)
+    ///   0° 0.1′  = 186 m  (smallestUnit = minutes, fractionalDigits = 2)
+    ///   0° 0′ 1″  = 31 m  (smallestUnit = seconds, fractionalDigits = 2)
+    ///   0° 0′ 0.1″  = 3.1 m  (smallestUnit = seconds, fractionalDigits = 3)
+    ///   0° 0′ 0.01″  = 31 cm  (smallestUnit = seconds, fractionalDigits = 4)
+    ///   0° 0′ 0.001″  = 3.1 cm  (smallestUnit = seconds, fractionalDigits = 5)
     
     //MARK:  Units & Separators
     /// Customize string to be used as degrees unit string. This string will be adjacent to the number, so include leading space as needed.
