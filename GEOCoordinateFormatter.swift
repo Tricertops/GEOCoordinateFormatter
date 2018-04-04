@@ -22,19 +22,19 @@ import CoreLocation
     @objc public var locale: Locale = Locale(identifier: "en_US_POSIX")
     /// Specify which units will be used. This formatter always prints all larger units, for example 0° 0′ 3″ (smallestUnit = seconds).
     @objc public var smallestUnit: GEOCoordinateFormatterUnit = .minutes
-    /// Specify how many digits beyond degrees should be printed, degrees are always printer with up to 3 integer digits. After using all integer digits allowed by smallestUnit, the smallest unit will get fractional digits. For example 12° 34.567′ (smallestUnit = minutes, fractionalDigits = 5).
-    @objc public var fractionalDigits: UInt = 2
+    /// Specify how many digits beyond integer degrees should be printed, degrees are always printer with up to 3 integer digits. After using all integer digits allowed by smallestUnit, the smallest unit will get fractional digits. For example 12° 34.567′ (smallestUnit = minutes,  precisionDigits = 5).
+    @objc public var precisionDigits: UInt = 2
     
     /// To get a sense of distances, here is a convenient table for equator.
     /// Keep in mind that longitudal resolution decreases toward poles.
-    ///   1°  = 111 km  (smallestUnit = degrees, fractionalDigits = 0)
-    ///   0.1°  = 11.1 km  (smallestUnit = degrees, fractionalDigits = 1)
-    ///   0° 1′  = 1.86 km  (smallestUnit = minutes, fractionalDigits = 1)
-    ///   0° 0.1′  = 186 m  (smallestUnit = minutes, fractionalDigits = 2)
-    ///   0° 0′ 1″  = 31 m  (smallestUnit = seconds, fractionalDigits = 2)
-    ///   0° 0′ 0.1″  = 3.1 m  (smallestUnit = seconds, fractionalDigits = 3)
-    ///   0° 0′ 0.01″  = 31 cm  (smallestUnit = seconds, fractionalDigits = 4)
-    ///   0° 0′ 0.001″  = 3.1 cm  (smallestUnit = seconds, fractionalDigits = 5)
+    ///   1°  = 111 km  (smallestUnit = degrees,  precisionDigits = 0)
+    ///   0.1°  = 11.1 km  (smallestUnit = degrees,  precisionDigits = 1)
+    ///   0° 1′  = 1.86 km  (smallestUnit = minutes,  precisionDigits = 1)
+    ///   0° 0.1′  = 186 m  (smallestUnit = minutes,  precisionDigits = 2)
+    ///   0° 0′ 1″  = 31 m  (smallestUnit = seconds,  precisionDigits = 2)
+    ///   0° 0′ 0.1″  = 3.1 m  (smallestUnit = seconds,  precisionDigits = 3)
+    ///   0° 0′ 0.01″  = 31 cm  (smallestUnit = seconds,  precisionDigits = 4)
+    ///   0° 0′ 0.001″  = 3.1 cm  (smallestUnit = seconds,  precisionDigits = 5)
     
     //MARK:  Units & Separators
     /// Customize string to be used as degrees unit string. This string will be adjacent to the number, so include leading space as needed.
@@ -128,7 +128,154 @@ extension GEOCoordinateFormatter {
     }
     
     private func buildFormat(number: Double, axis: Axis) -> String {
-        fatalError("//TODO: Implement this")
+        if number.isNaN || number.isInfinite {
+            return ""
+        }
+        let decomposed = self.decompose(number: number)
+        
+        var components: [String]
+        let formatter = self.makeNumberFormatter()
+        // Number of digits beyond integer degrees.
+        var precision = Int(self.precisionDigits)
+        
+        switch self.smallestUnit {
+        case .degrees:
+            //  12.34567° S
+            // -12.34567°
+            
+            let degrees = self.format(number: number, precision: precision, formatter: formatter)
+            components = [degrees]
+            
+        case .minutes:
+            //  12° 34.567′ S
+            // -12° 34.567′
+            
+            // Two digits are consumed by integer minutes.
+            precision -= 2
+            
+            let degreesString = self.format(number: decomposed.degrees, precision: 0, formatter: formatter)
+            let minutesString = self.format(number: decomposed.minutes, precision: precision, formatter: formatter)
+            components = [degreesString, minutesString]
+            
+        case .seconds:
+            //  12° 34′ 56.7″ S
+            // -12° 34′ 56.7″
+            
+            // Two digits are consumed by integer minutes.
+            // Two digits are consumed by integer seconds.
+            precision -= 4
+            
+            let degreesString = self.format(number: decomposed.degrees, precision: 0, formatter: formatter)
+            let minutesString = self.format(number: decomposed.minutes, precision: 0, formatter: formatter)
+            let secondsString = self.format(number: decomposed.seconds, precision: precision, formatter: formatter)
+            components = [degreesString, minutesString, secondsString]
+        }
+        
+        if self.usesHemisphereSuffixes {
+            let hemisphere = self.hemisphereSufffix(for: axis, negative: (number < 0))
+            if !hemisphere.isEmpty {
+                components.append(hemisphere)
+            }
+        }
+        
+        return components.joined(separator: self.componentSeparator)
+    }
+    
+    private func makeNumberFormatter() -> NumberFormatter {
+        let formatter = NumberFormatter()
+        formatter.locale = self.locale
+        formatter.numberStyle = .decimal
+        formatter.minusSign = self.minusSign
+        formatter.usesGroupingSeparator = false
+        formatter.minimumIntegerDigits = 1
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 0
+        return formatter
+    }
+    
+    private func decompose(number: Double) -> (degrees: Double, minutes: Double, seconds: Double) {
+        // Number of digits beyond integer degrees.
+        var precision = Int(self.precisionDigits)
+        
+        switch self.smallestUnit {
+        case .degrees:
+            // The number is degrees.
+            return (number, 0, 0)
+            
+        case .minutes:
+            precision -= 2
+            
+            // Degrees are simply rounded.
+            var degrees = abs(number)
+            // Minutes are 60× the fractional part.
+            var minutes = degrees.remainder(dividingBy: 1) * 60
+            
+            degrees.round(.towardZero)
+            minutes = self.rounded(number: minutes, fractionalDigits: precision)
+            
+            // If rounding overflowed valid range, increment higher unit.
+            if minutes > 60 {
+                minutes -= 60
+                degrees += 1
+            }
+            // If we need to use minus sign, negate degrees.
+            if !self.usesHemisphereSuffixes && number < 0 {
+                degrees *= -1
+            }
+            
+            return (degrees, minutes, 0)
+            
+        case .seconds:
+            // Two digits are consumed by integer minutes.
+            // Two digits are consumed by integer seconds.
+            precision -= 4
+            
+            // Degrees are simply rounded.
+            var degrees = abs(number)
+            // Minutes and seconds are 60× the fractional part.
+            var minutes = degrees.remainder(dividingBy: 1) * 60
+            var seconds = minutes.remainder(dividingBy: 1) * 60
+            
+            degrees.round(.towardZero)
+            minutes.round(.towardZero)
+            seconds = self.rounded(number: seconds, fractionalDigits: precision)
+            
+            // If rounding overflowed valid range, increment higher unit.
+            if seconds > 60 {
+                seconds -= 60
+                minutes += 1
+            }
+            if minutes > 60 {
+                minutes -= 60
+                degrees += 1
+            }
+            // If we need to use minus sign, negate degrees.
+            if !self.usesHemisphereSuffixes && number < 0 {
+                degrees *= -1
+            }
+            
+            return (degrees, minutes, seconds)
+        }
+    }
+    
+    private func rounded(number: Double, fractionalDigits: Int) -> Double {
+        let roundingScale = pow(10.0, Double(fractionalDigits))
+        return (number * roundingScale).rounded() / roundingScale
+    }
+    
+    private func format(number: Double, precision: Int, formatter: NumberFormatter) -> String {
+        let precision = max(precision, 0)
+        formatter.minimumFractionDigits = precision
+        formatter.maximumFractionDigits = precision
+        return formatter.string(from: number as NSNumber)!
+    }
+    
+    private func hemisphereSufffix(for axis: Axis, negative: Bool) -> String {
+        switch axis {
+        case .undefined: return ""
+        case .latitudal: return (negative ? self.southString : self.northString)
+        case .longitudal: return (negative ? self.westString : self.eastString)
+        }
     }
 }
 
