@@ -78,14 +78,14 @@ import CoreLocation
         return self.buildFormat(number: longitude, axis: .longitudal)
     }
     /// Builds coordinate format for both latitude and longitude. Joins them using comma.
-    @objc public func stringFor(coordinate: CLLocationCoordinate2D) -> String {
-        return self.stringFor(latitude: coordinate.latitude, longitude: coordinate.longitude)
+    @objc public func stringFor(coordinate: CLLocationCoordinate2D, joiner: String = ", ") -> String {
+        return self.stringFor(latitude: coordinate.latitude, longitude: coordinate.longitude, joiner: joiner)
     }
     /// Builds coordinate format for both latitude and longitude. Joins them using comma.
-    @objc public func stringFor(latitude: Double, longitude: Double) -> String {
+    @objc public func stringFor(latitude: Double, longitude: Double, joiner: String = ", ") -> String {
         let latitudeString = self.buildFormat(number: latitude, axis: .latitudal)
         let longitudeString = self.buildFormat(number: longitude, axis: .longitudal)
-        return latitudeString + ", " + longitudeString
+        return latitudeString + joiner + longitudeString
     }
 }
 
