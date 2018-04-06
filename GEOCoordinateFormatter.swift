@@ -215,10 +215,10 @@ extension GEOCoordinateFormatter {
             // Degrees are simply rounded.
             var degrees = abs(number)
             // Minutes are 60× the fractional part.
-            var minutes = degrees.remainder(dividingBy: 1) * 60
+            var minutes = degrees.truncatingRemainder(dividingBy: 1) * 60
             
             degrees.round(.towardZero)
-            minutes = self.rounded(number: minutes, fractionalDigits: precision)
+            minutes = self.rounded(number: minutes, precision: precision)
             
             // If rounding overflowed valid range, increment higher unit.
             if minutes > 60 {
@@ -240,12 +240,12 @@ extension GEOCoordinateFormatter {
             // Degrees are simply rounded.
             var degrees = abs(number)
             // Minutes and seconds are 60× the fractional part.
-            var minutes = degrees.remainder(dividingBy: 1) * 60
-            var seconds = minutes.remainder(dividingBy: 1) * 60
+            var minutes = degrees.truncatingRemainder(dividingBy: 1) * 60
+            var seconds = minutes.truncatingRemainder(dividingBy: 1) * 60
             
             degrees.round(.towardZero)
             minutes.round(.towardZero)
-            seconds = self.rounded(number: seconds, fractionalDigits: precision)
+            seconds = self.rounded(number: seconds, precision: precision)
             
             // If rounding overflowed valid range, increment higher unit.
             if seconds > 60 {
@@ -265,8 +265,8 @@ extension GEOCoordinateFormatter {
         }
     }
     
-    private func rounded(number: Double, fractionalDigits: Int) -> Double {
-        let roundingScale = pow(10.0, Double(fractionalDigits))
+    private func rounded(number: Double, precision: Int) -> Double {
+        let roundingScale = pow(10.0, Double(precision))
         return (number * roundingScale).rounded() / roundingScale
     }
     
