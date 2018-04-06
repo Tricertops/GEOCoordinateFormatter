@@ -22,19 +22,23 @@ import CoreLocation
     @objc public var locale: Locale = Locale(identifier: "en_US_POSIX")
     /// Specify which units will be used. This formatter always prints all larger units, for example 0° 0′ 3″ (smallestUnit = seconds).
     @objc public var smallestUnit: GEOCoordinateFormatterUnit = .minutes
-    /// Specify how many digits beyond integer degrees should be printed, degrees are always printer with up to 3 integer digits. After using all integer digits allowed by smallestUnit, the smallest unit will get fractional digits. For example 12° 34.567′ (smallestUnit = minutes,  precisionDigits = 5).
+    /// Specify how many digits beyond integer degrees should be printed, degrees are always printer with up to 3 integer digits.
+    /// After using all integer digits allowed by smallestUnit, the smallest unit will get fractional digits.
+    /// For example: 12° 34.567′ (smallestUnit = minutes,  precisionDigits = 5).
     @objc public var precisionDigits: UInt = 2
     
     /// To get a sense of distances, here is a convenient table for equator.
     /// Keep in mind that longitudal resolution decreases toward poles.
-    ///   1°  = 111 km  (smallestUnit = degrees,  precisionDigits = 0)
-    ///   0.1°  = 11.1 km  (smallestUnit = degrees,  precisionDigits = 1)
-    ///   0° 1′  = 1.86 km  (smallestUnit = minutes,  precisionDigits = 1)
-    ///   0° 0.1′  = 186 m  (smallestUnit = minutes,  precisionDigits = 2)
-    ///   0° 0′ 1″  = 31 m  (smallestUnit = seconds,  precisionDigits = 2)
-    ///   0° 0′ 0.1″  = 3.1 m  (smallestUnit = seconds,  precisionDigits = 3)
-    ///   0° 0′ 0.01″  = 31 cm  (smallestUnit = seconds,  precisionDigits = 4)
-    ///   0° 0′ 0.001″  = 3.1 cm  (smallestUnit = seconds,  precisionDigits = 5)
+    ///   1°    = 111 km  (smallestUnit = degrees,  precisionDigits = 0)
+    ///   0° 10′ = 18.6 km  (smallestUnit = minutes,  precisionDigits = 1)
+    ///   0.1°    = 11.1 km  (smallestUnit = degrees,  precisionDigits = 1)
+    ///   0° 1′    = 1.86 km  (smallestUnit = minutes,  precisionDigits = 2)
+    ///   0° 0′ 10″ = 310 m  (smallestUnit = seconds,  precisionDigits = 3)
+    ///   0° 0.1′    = 186 m  (smallestUnit = minutes,  precisionDigits = 3)
+    ///   0° 0′ 1″    = 31 m  (smallestUnit = seconds,  precisionDigits = 4)
+    ///   0° 0′ 0.1″   = 3.1 m  (smallestUnit = seconds,  precisionDigits = 5)
+    ///   0° 0′ 0.01″   = 31 cm  (smallestUnit = seconds,  precisionDigits = 6)
+    ///   0° 0′ 0.001″   = 3.1 cm  (smallestUnit = seconds,  precisionDigits = 7)
     
     //MARK:  Units & Separators
     /// Customize string to be used as degrees unit string. This string will be adjacent to the number, so include leading space as needed.
@@ -266,6 +270,7 @@ extension GEOCoordinateFormatter {
     }
     
     private func rounded(number: Double, precision: Int) -> Double {
+        // Works also for negative precision: precision -1 will round to 10.
         let roundingScale = pow(10.0, Double(precision))
         return (number * roundingScale).rounded() / roundingScale
     }
