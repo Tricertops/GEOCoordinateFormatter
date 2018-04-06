@@ -144,7 +144,7 @@ extension GEOCoordinateFormatter {
             // -12.34567°
             
             let degrees = self.format(number: number, precision: precision, formatter: formatter)
-            components = [degrees]
+            components = [ degrees + self.degreeString ]
             
         case .minutes:
             //  12° 34.567′ S
@@ -155,7 +155,10 @@ extension GEOCoordinateFormatter {
             
             let degreesString = self.format(number: decomposed.degrees, precision: 0, formatter: formatter)
             let minutesString = self.format(number: decomposed.minutes, precision: precision, formatter: formatter)
-            components = [degreesString, minutesString]
+            components = [
+                degreesString + self.degreeString,
+                minutesString + self.minuteString,
+            ]
             
         case .seconds:
             //  12° 34′ 56.7″ S
@@ -168,7 +171,11 @@ extension GEOCoordinateFormatter {
             let degreesString = self.format(number: decomposed.degrees, precision: 0, formatter: formatter)
             let minutesString = self.format(number: decomposed.minutes, precision: 0, formatter: formatter)
             let secondsString = self.format(number: decomposed.seconds, precision: precision, formatter: formatter)
-            components = [degreesString, minutesString, secondsString]
+            components = [
+                degreesString + self.degreeString,
+                minutesString + self.minuteString,
+                secondsString + self.secondString,
+            ]
         }
         
         if self.usesHemisphereSuffixes {
