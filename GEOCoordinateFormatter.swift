@@ -49,6 +49,8 @@ import CoreLocation
     @objc public var secondString: String = "″" // U+2033 DOUBLE PRIME
     /// Customize string that will be inserted between degrees, minutes, and seconds.
     @objc public var componentSeparator: String = " " // U+00A0 NO-BREAK SPACE
+    /// Customize decimal separator for numbers. If nil, default of locale will be used.
+    @objc public var decimalSeparator: String? = nil
     
     //MARK:  Hemispheres
     /// Specify whether the formatter appends hemisphere suffix after the coordinate. If false, the formatter will use minusSign to indicate Southern or Western hemisphere. Examples 12° 34′ W and −12° 34′.
@@ -195,6 +197,7 @@ extension GEOCoordinateFormatter {
     private func makeNumberFormatter() -> NumberFormatter {
         let formatter = NumberFormatter()
         formatter.locale = self.locale
+        formatter.decimalSeparator = self.decimalSeparator ?? self.locale.decimalSeparator;
         formatter.numberStyle = .decimal
         formatter.minusSign = self.minusSign
         formatter.usesGroupingSeparator = false
