@@ -48,7 +48,7 @@ import CoreLocation
     /// Customize string to be used as seconds unit string. This string will be adjacent to the number, so include leading space as needed.
     @objc public var secondString: String = "″" // U+2033 DOUBLE PRIME
     /// Customize string that will be inserted between degrees, minutes, and seconds.
-    @objc public var componentSeparator: String = " " // U+0020 SPACE
+    @objc public var componentSeparator: String = " " // U+00A0 NO-BREAK SPACE
     
     //MARK:  Hemispheres
     /// Specify whether the formatter appends hemisphere suffix after the coordinate. If false, the formatter will use minusSign to indicate Southern or Western hemisphere. Examples 12° 34′ W and −12° 34′.
