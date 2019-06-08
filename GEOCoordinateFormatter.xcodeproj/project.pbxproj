@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -97,6 +97,7 @@
 		5B19FBB22073B52C004A6C04 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				CLASSPREFIX = GEO;
 				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = Tricertops;
 				TargetAttributes = {
@@ -107,7 +108,7 @@
 				};
 			};
 			buildConfigurationList = 5B19FBB52073B52C004A6C04 /* Build configuration list for PBXProject "GEOCoordinateFormatter" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 10.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
