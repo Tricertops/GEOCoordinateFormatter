@@ -28,7 +28,7 @@ import CoreLocation
     @objc public var precisionDigits: UInt = 2
     
     /// To get a sense of distances, here is a convenient table for equator.
-    /// Keep in mind that longitudal resolution decreases toward poles.
+    /// Keep in mind that longitudal resolution decreases toward poles (70% at ±45° latitude, 50% at ±60° latitude).
     ///   1°    = 111 km  (smallestUnit = degrees,  precisionDigits = 0)
     ///   0° 10′ = 18.6 km  (smallestUnit = minutes,  precisionDigits = 1)
     ///   0.1°    = 11.1 km  (smallestUnit = degrees,  precisionDigits = 1)
