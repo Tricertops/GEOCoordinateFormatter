@@ -77,9 +77,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5B19FBC32073B52C004A6C04 /* Build configuration list for PBXNativeTarget "GEOCoordinateFormatter" */;
 			buildPhases = (
+				5B19FBB82073B52C004A6C04 /* Headers */,
 				5B19FBB62073B52C004A6C04 /* Sources */,
 				5B19FBB72073B52C004A6C04 /* Frameworks */,
-				5B19FBB82073B52C004A6C04 /* Headers */,
 				5B19FBB92073B52C004A6C04 /* Resources */,
 			);
 			buildRules = (
