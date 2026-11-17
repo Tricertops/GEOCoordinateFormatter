@@ -99,7 +99,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				CLASSPREFIX = GEO;
-				LastUpgradeCheck = 2650;
+				LastUpgradeCheck = 2720;
 				ORGANIZATIONNAME = Tricertops;
 				TargetAttributes = {
 					5B19FBBA2073B52C004A6C04 = {
@@ -286,7 +286,7 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -314,7 +314,7 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
